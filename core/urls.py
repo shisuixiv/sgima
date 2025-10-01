@@ -6,7 +6,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/v1/users/", include("app.users.urls")),
-    path("api/v1/car/", include("app.car.urls")),
+    path("api/v1/cars/", include("app.car.urls")),
     path("auth/", include("dj_rest_auth.urls")),
     path("auth/registration/", include("dj_rest_auth.registration.urls")),
     path("auth/github/", include("allauth.socialaccount.urls")),

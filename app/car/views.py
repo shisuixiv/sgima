@@ -42,3 +42,14 @@ class CArViewsetsAPI(ModelViewSet):
             pass
 
         return Response(car)
+    
+    def create(self, request, *args, **kwargs):
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        car = serializer.save(user=request.user)
+
+        car = Car.objects.create()
+        process_car_creation.delay(car.id)
+
+        return Response({"status":"Объявление делается"})

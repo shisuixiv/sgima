@@ -12,3 +12,7 @@ def send_email_task(self, to_email : str, subject : str, body : str):
         return result
     except Exception as exc:
         raise self.retry(exc=exc, countdown=60)
+
+@shared_task
+def process_car_creation(car_id):
+    car = Car.objects.get(id=car_id)
