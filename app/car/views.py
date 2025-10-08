@@ -3,14 +3,19 @@ from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import filters
+from rest_framework import permissions
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django.core.cache import cache
 
+
+from asgiref.sync import async_to_sync
 from app.filters import CarFilter
 from app.car.pagination import CustomPagination
 from app.car.models import Car
 from app.car.serializers import CarSerializer
+
+from bot.bot import send_car_notification
 
 class CarViewsetsAPI(ModelViewSet):
     queryset = Car.objects.all()
@@ -69,3 +74,23 @@ class CarViewsetsAPI(ModelViewSet):
 
         return Response({"status": "Объявление генерируется"})
 
+class CarNotication(ModelViewSet):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        car = serializer.save(user=self.request.user)
+        
+        car_data = {
+            "user": car.user.username ,
+            "brand": car.brand ,
+            "model": car.model ,
+            "number": car.number ,
+            "probeg": car.probeg ,
+            "caraka_transfer": car.caraka_transfer,
+            "type_car": car.type_car,
+            "data": car.data
+        }
+
+        async_to_sync(send_car_notification)(car_data)

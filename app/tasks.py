@@ -1,6 +1,7 @@
 import time
 from celery import shared_task
 from celery.utils.log import get_task_logger
+from app.car.models import Car
 
 logger = get_task_logger(__name__)
 
@@ -16,3 +17,12 @@ def send_email_task(self, to_email : str, subject : str, body : str):
 @shared_task
 def process_car_creation(car_id):
     car = Car.objects.get(id=car_id)
+
+# app/car/tasks.py
+from celery import shared_task
+import asyncio
+from bot.bot import send_car_notification
+
+@shared_task
+def send_car_notification_task(car_data):
+    asyncio.run(send_car_notification(car_data))

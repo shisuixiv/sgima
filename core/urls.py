@@ -7,6 +7,10 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -18,7 +22,11 @@ urlpatterns = [
     path("auth/registration/", include("dj_rest_auth.registration.urls")),
     path("auth/github/", include("allauth.socialaccount.urls")),
     path("accounts/", include("allauth.urls")), 
-    #swager
+    
+    path("auth/jwt/create/", TokenObtainPairView.as_view(), name="jwt-create"),
+    path("auth/jwt/refresh/", TokenRefreshView.as_view(), name="jwt-refresh"),
+
+    #swagger/nigger
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("api/docs/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
